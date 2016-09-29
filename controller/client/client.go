@@ -89,6 +89,10 @@ type Client interface {
 	GetBackupMeta() (*ct.ClusterBackup, error)
 	DeleteRelease(appID, releaseID string) (*ct.ReleaseDeletion, error)
 	ScheduleAppGarbageCollection(appID string) error
+	CreateSink(sink *ct.Sink) error
+	GetSink(sinkID string) (*ct.Sink, error)
+	DeleteSink(sinkID string) error
+	ListSinks() ([]*ct.Sink, error)
 }
 
 type Config struct {

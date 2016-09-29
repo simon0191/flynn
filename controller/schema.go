@@ -415,6 +415,18 @@ $$ LANGUAGE plpgsql`,
 	migrations.Add(24,
 		`UPDATE apps SET meta = jsonb_merge(CASE WHEN meta = 'null' THEN '{}' ELSE meta END, '{"gc.max_inactive_slug_releases":"10"}') WHERE meta->>'gc.max_inactive_slug_releases' IS NULL`,
 	)
+	migrations.Add(25,
+		`CREATE TABLE sink_kinds (name text PRIMARY KEY)`,
+		`INSERT INTO sink_kinds (name) VALUES ('tcp')`,
+		`CREATE TABLE sinks (
+			sink_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+			kind text NOT NULL REFERENCES sink_kinds,
+			config jsonb NOT NULL,
+			created_at timestamptz NOT NULL DEFAULT now(),
+			updated_at timestamptz NOT NULL DEFAULT now(),
+			deleted_at timestamptz
+		)`,
+	)
 }
 
 func migrateDB(db *postgres.DB) error {

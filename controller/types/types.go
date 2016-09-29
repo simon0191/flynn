@@ -366,6 +366,8 @@ const (
 	EventTypeDomainMigration      EventType = "domain_migration"
 	EventTypeClusterBackup        EventType = "cluster_backup"
 	EventTypeAppGarbageCollection EventType = "app_garbage_collection"
+	EventTypeSink                 EventType = "sink"
+	EventTypeSinkDeletion         EventType = "sink_deletion"
 )
 
 type Event struct {
@@ -465,4 +467,23 @@ type AppGarbageCollection struct {
 type AppGarbageCollectionEvent struct {
 	AppGarbageCollection *AppGarbageCollection `json:"app_garbage_collection"`
 	Error                string                `json:"error"`
+}
+
+type SinkKind string
+
+const (
+	SinkKindTCP SinkKind = "tcp"
+)
+
+type Sink struct {
+	ID        string          `json:"id"`
+	Kind      SinkKind        `json:"kind"`
+	Config    json.RawMessage `json:"config"`
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+}
+
+type ExpandedSink struct {
+	Sink
+	Deleted bool `json:"deleted, omitempty"`
 }

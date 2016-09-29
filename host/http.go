@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/flynn/flynn/host/downloader"
+	"github.com/flynn/flynn/host/logmux"
 	"github.com/flynn/flynn/host/types"
 	"github.com/flynn/flynn/host/volume/api"
 	"github.com/flynn/flynn/host/volume/manager"
@@ -36,6 +37,7 @@ type Host struct {
 	state   *State
 	backend Backend
 	vman    *volumemanager.Manager
+	sman    *logmux.SinkManager
 	discMan *DiscoverdManager
 	volAPI  *volumeapi.HTTPAPI
 	id      string
@@ -595,6 +597,9 @@ func (h *Host) ServeHTTP() {
 
 func (h *Host) OpenDBs() error {
 	if err := h.state.OpenDB(); err != nil {
+		return err
+	}
+	if err := h.sman.OpenDB(); err != nil {
 		return err
 	}
 	return h.vman.OpenDB()

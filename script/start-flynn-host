@@ -83,6 +83,7 @@ main() {
 
   local id="host${index}"
   local state="/tmp/flynn-host-state-${index}.bolt"
+  local sinkstate="/tmp/flynn-host-sink-state-${index}.bolt"
   local pidfile="/tmp/flynn-host-${index}.pid"
   local bridge_name="flynnbr${index}"
   local vol_path="/var/lib/flynn/volumes-${index}"
@@ -131,6 +132,7 @@ main() {
     --bridge-name "${bridge_name}" \
     --force \
     --state "${state}" \
+    --sink-state "${sinkstate}" \
     --volpath "${vol_path}" \
     --log-dir "${log_dir}" \
     --flynn-init "${bin_dir}/flynn-init" \
