@@ -243,6 +243,14 @@ func JobDownEvents(count int) map[JobState]int {
 	return map[JobState]int{JobStateDown: count}
 }
 
+type PartitionType string
+
+const (
+	PartitionTypeBackground PartitionType = "background"
+	PartitionTypeSystem     PartitionType = "system"
+	PartitionTypeUser       PartitionType = "user"
+)
+
 type NewJob struct {
 	ReleaseID  string             `json:"release,omitempty"`
 	ArtifactID string             `json:"artifact,omitempty"`
@@ -255,6 +263,7 @@ type NewJob struct {
 	Lines      int                `json:"tty_lines,omitempty"`
 	DisableLog bool               `json:"disable_log,omitempty"`
 	Resources  resource.Resources `json:"resources,omitempty"`
+	Partition  PartitionType      `json:"partition,omitempty"`
 
 	// Entrypoint and Cmd are DEPRECATED: use Args instead
 	DeprecatedCmd        []string `json:"cmd,omitempty"`

@@ -54,6 +54,9 @@
     },
     "resources": {
       "$ref": "/schema/controller/common#/definitions/resources"
+    },
+    "partition": {
+      "$ref": "/schema/controller/common#/definitions/partition"
     }
   }
 }
