@@ -365,3 +365,46 @@ func (MigrateSuite) TestMigrateRedisService(c *C) {
 	}
 	c.Assert(proc.Service, Equals, appName)
 }
+
+func (MigrateSuite) TestMigrateProcessData(c *C) {
+	db := setupTestDB(c, "controllertest_migrate_process_data")
+	m := &testMigrator{c: c, db: db}
+
+	// start from ID 23
+	m.migrateTo(23)
+
+	// create some process types with data
+	type oldProcType struct {
+		Data bool `json:"data,omitempty"`
+	}
+	releases := map[string]*oldProcType{
+		random.UUID(): {Data: false},
+		random.UUID(): {Data: true},
+	}
+	for id, proc := range releases {
+		procs := map[string]*oldProcType{"web": proc, "app": proc}
+		c.Assert(db.Exec(`INSERT INTO releases (release_id, processes) VALUES ($1, $2)`, id, procs), IsNil)
+	}
+
+	// migrate to 24 and check Data is false and Volumes was populated correctly
+	m.migrateTo(24)
+	type volume struct {
+		Path string `json:"path"`
+	}
+	type newProcType struct {
+		Data    bool     `json:"data,omitempty"`
+		Volumes []volume `json:"volumes,omitempty"`
+	}
+	for id, oldProc := range releases {
+		var procs map[string]*newProcType
+		c.Assert(db.QueryRow(`SELECT processes FROM releases WHERE release_id = $1`, id).Scan(&procs), IsNil)
+		for _, typ := range []string{"web", "app"} {
+			c.Assert(procs[typ].Data, Equals, false)
+			if oldProc.Data {
+				c.Assert(procs[typ].Volumes, DeepEquals, []volume{{Path: "/data"}})
+			} else {
+				c.Assert(procs[typ].Volumes, IsNil)
+			}
+		}
+	}
+}

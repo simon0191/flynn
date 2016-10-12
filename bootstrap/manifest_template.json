@@ -33,7 +33,7 @@
       "processes": {
         "app": {
           "ports": [{"port": 1111, "proto": "tcp"}, {"port": 53, "proto": "tcp"}],
-          "data": true,
+          "volumes": [{"path": "/data"}],
           "host_network": true,
           "omni": true,
           "service": "discoverd"
@@ -107,7 +107,7 @@
       "processes": {
         "postgres": {
           "ports": [{"port": 5432, "proto": "tcp"}],
-          "data": true,
+          "volumes": [{"path": "/data"}],
           "args": ["/bin/start-flynn-postgres", "postgres"],
           "service": "postgres",
           "env": {
@@ -378,7 +378,7 @@
           "env": {
             "SINGLETON": "{{ .Singleton }}"
           },
-          "data": true
+          "volumes": [{"path": "/data"}]
         },
         "web": {
           "ports": [{"port": 80, "proto": "tcp"}],
@@ -434,7 +434,7 @@
           "env": {
             "SINGLETON": "{{ .Singleton }}"
           },
-          "data": true
+          "volumes": [{"path": "/data"}]
         },
         "web": {
           "ports": [{"port": 80, "proto": "tcp"}],
